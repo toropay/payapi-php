@@ -4,6 +4,7 @@
     "description": "Toro Pay API client in PHP.",
     "homepage": "https://github.com/toropay/payapi-php",
     "license": "MIT",
+    "keywords": ["payment", "toropay"],
     "authors": [
         {
             "name": "Ishmael Doss",
