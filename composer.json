@@ -1,5 +1,5 @@
 {
-    "name": "toro/payapi-php",
+    "name": "toropay/payapi-php",
     "type": "library",
     "description": "Toro Pay API client in PHP.",
     "homepage": "https://github.com/toropay/payapi-php",
