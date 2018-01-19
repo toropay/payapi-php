@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Toro\Pay\Provider;
 
 use GuzzleHttp\Exception\ClientException;
-use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Toro\Pay\OAuth\GenericProvider;
 use Toro\Pay\ToroPay;
 
 class ResourceProvider extends GenericProvider implements ResourceProviderInterface
