@@ -16,10 +16,7 @@ namespace Toro\Pay;
 use Doctrine\Common\Inflector\Inflector;
 use Toro\Pay\Provider\ResourceProviderInterface;
 
-/**
- * @author Ishmael Doss <nukboon@gmail.com>
- */
-abstract class AbstractModel
+abstract class AbstractModel implements \JsonSerializable
 {
     /**
      * @var string
@@ -112,5 +109,13 @@ abstract class AbstractModel
     public function getResourceUrl(): ?string
     {
         return $this->store['_links']['self']['href'] ?? null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return json_encode($this->store);
     }
 }
