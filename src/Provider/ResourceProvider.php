@@ -7,6 +7,8 @@ namespace Toro\Pay\Provider;
 use GuzzleHttp\Exception\ClientException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Toro\Pay\OAuth\GenericProvider;
@@ -33,6 +35,11 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
      * @var string
      */
     protected $userAgent;
+
+    /**
+     * @var SessionInterface
+     */
+    protected $session;
 
     public function __construct(array $options = [], array $collaborators = [])
     {
@@ -66,6 +73,9 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $resolver->setDefault('urlResource', function (Options $options) {
             return $this->getBaseUrl($options) . sprintf('/api/%s', $options['apiVersion']);
         });
+        $resolver->setDefault('session', function (Options $options) {
+            return new Session();
+        });
 
         $resolver->setNormalizer('clientId', function (OptionsResolver $resolver, $value) {
             return (string)$value;
@@ -82,6 +92,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $resolver->setAllowedTypes('urlResource', 'string');
         $resolver->setAllowedTypes('userAgent', 'string');
         $resolver->setAllowedTypes('ownerProvider', OwnerProviderInterface::class);
+        $resolver->setAllowedTypes('sessionStorage', SessionInterface::class);
 
         $resolver->setAllowedValues('redirectUri', function ($value) {
             return filter_var($value, FILTER_VALIDATE_URL);
@@ -261,16 +272,15 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $sessionKey = 'toro_pay_oauth2_state';
 
         if (empty($code)) {
-            $_SESSION[$sessionKey] = $this->getState();
+            $this->session->set($sessionKey, $this->getState());
 
             header('Location: ' . $this->getAuthorizationUrl());
+
             return 1;
         }
 
-        if (empty($state) || (isset($_SESSION[$sessionKey]) && $state !== $_SESSION[$sessionKey])) {
-            if (isset($_SESSION[$sessionKey])) {
-                unset($_SESSION[$sessionKey]);
-            }
+        if ($state !== $this->session->get($sessionKey)) {
+            $this->session->remove($sessionKey);
 
             return 0;
         }
