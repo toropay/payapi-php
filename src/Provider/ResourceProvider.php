@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Toro\Pay\Provider;
 
-use GuzzleHttp\Exception\ClientException;
+use Http\Client\HttpClient;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -48,6 +48,8 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
 
         $options = $resolver->resolve($options);
 
+        $collaborators['httpClient'] = $options['httpClient'];
+
         parent::__construct($options, $collaborators);
     }
 
@@ -58,6 +60,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
     {
         $resolver->setRequired(['clientId', 'clientSecret', 'ownerProvider', 'redirectUri']);
 
+        $resolver->setDefault('httpClient', null);
         $resolver->setDefault('sandbox', true);
         $resolver->setDefault('apiVersion', 'v1');
         $resolver->setDefault('userAgent', sprintf('%s/%s', ToroPay::SERVICE_NAME, ToroPay::VERSION));
@@ -81,6 +84,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
             return (string)$value;
         });
 
+        $resolver->setAllowedTypes('sandbox', ['null', HttpClient::class]);
         $resolver->setAllowedTypes('sandbox', 'boolean');
         $resolver->setAllowedTypes('clientId', 'string');
         $resolver->setAllowedTypes('clientSecret', 'string');
@@ -92,7 +96,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $resolver->setAllowedTypes('urlResource', 'string');
         $resolver->setAllowedTypes('userAgent', 'string');
         $resolver->setAllowedTypes('ownerProvider', OwnerProviderInterface::class);
-        $resolver->setAllowedTypes('sessionStorage', SessionInterface::class);
+        $resolver->setAllowedTypes('session', SessionInterface::class);
 
         $resolver->setAllowedValues('redirectUri', function ($value) {
             return filter_var($value, FILTER_VALIDATE_URL);
@@ -202,18 +206,14 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
             $refreshToken = $token->getRefreshToken();
         }
 
-        try {
-            $response = $this->getResponse(
-                $this->getAuthenticatedRequest($method, $uri, $accessToken, [
-                    'body' => !empty($data) ? json_encode($data) : null,
-                    'headers' => array_replace_recursive([
-                        'User-Agent' => $this->userAgent,
-                    ], $headers),
-                ])
-            );
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-        }
+        $response = $this->getResponse(
+            $this->getAuthenticatedRequest($method, $uri, $accessToken, [
+                'body' => !empty($data) ? json_encode($data) : null,
+                'headers' => array_replace_recursive([
+                    'User-Agent' => $this->userAgent,
+                ], $headers),
+            ])
+        );
 
         try {
             $contentBody = $this->parseJson((string)$response->getBody());

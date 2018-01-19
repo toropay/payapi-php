@@ -498,9 +498,13 @@ abstract class AbstractProvider
     /**
      * Requests an access token using a specified grant and option set.
      *
-     * @param  mixed $grant
-     * @param  array $options
+     * @param string $grant
+     * @param array $options
+     *
      * @return AccessToken
+     *
+     * @throws IdentityProviderException
+     * @throws \Exception
      */
     public function getAccessToken($grant, array $options = [])
     {
@@ -575,12 +579,11 @@ abstract class AbstractProvider
      * WARNING: This method does not attempt to catch exceptions caused by HTTP
      * errors! It is recommended to wrap this method in a try/catch block.
      *
-     * @param  RequestInterface $request
-     *
+     * @param RequestInterface $request
      * @return ResponseInterface
      *
-     * @throws HttpClientException
      * @throws \Exception
+     * @throws HttpClientException
      */
     public function getResponse(RequestInterface $request)
     {
@@ -590,17 +593,21 @@ abstract class AbstractProvider
     /**
      * Sends a request and returns the parsed response.
      *
-     * @param  RequestInterface $request
-     * @return mixed
+     * @param RequestInterface $request
+     *
+     * @return array
+     *
+     * @throws IdentityProviderException
+     * @throws \Exception
      */
     public function getParsedResponse(RequestInterface $request)
     {
-        /*try {
+        try {
             $response = $this->getResponse($request);
-        } catch (BadResponseException $e) {
+        } catch (HttpClientException | HttpClientException\HttpException $e) {
             $response = $e->getResponse();
-        }*/
-        $response = $this->getResponse($request);
+        }
+
         $parsed = $this->parseResponse($response);
 
         $this->checkResponse($response, $parsed);
@@ -643,9 +650,10 @@ abstract class AbstractProvider
     /**
      * Parses the response according to its content-type header.
      *
-     * @throws \UnexpectedValueException
      * @param  ResponseInterface $response
+     *
      * @return array
+     * @throws \UnexpectedValueException
      */
     protected function parseResponse(ResponseInterface $response)
     {
@@ -667,15 +675,11 @@ abstract class AbstractProvider
                 throw $e;
             }
 
-            if ($response->getStatusCode() == 500) {
-                throw new \UnexpectedValueException(
-                    'An OAuth server error was encountered that did not contain a JSON body',
-                    0,
-                    $e
-                );
-            }
-
-            return $content;
+            throw new \UnexpectedValueException(
+                'An OAuth server error was encountered that did not contain a JSON body',
+                0,
+                $e
+            );
         }
     }
 
@@ -737,8 +741,12 @@ abstract class AbstractProvider
     /**
      * Requests and returns the resource owner of given access token.
      *
-     * @param  AccessToken $token
+     * @param AccessToken $token
+     *
      * @return ResourceOwnerInterface
+     *
+     * @throws IdentityProviderException
+     * @throws \Exception
      */
     public function getResourceOwner(AccessToken $token)
     {
@@ -750,15 +758,17 @@ abstract class AbstractProvider
     /**
      * Requests resource owner details.
      *
-     * @param  AccessToken $token
-     * @return mixed
+     * @param AccessToken $token
+     *
+     * @return array
+     *
+     * @throws IdentityProviderException
+     * @throws \Exception
      */
     protected function fetchResourceOwnerDetails(AccessToken $token)
     {
         $url = $this->getResourceOwnerDetailsUrl($token);
-
         $request = $this->getAuthenticatedRequest(self::METHOD_GET, $url, $token);
-
         $response = $this->getParsedResponse($request);
 
         if (false === is_array($response)) {
