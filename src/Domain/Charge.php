@@ -25,9 +25,9 @@ class Charge extends AbstractModel
     public function getCreateData(): array
     {
         return [
-            'amount' => 0,
-            'note' => '',
-            'return_uri' => '',
+            'amount' => $this->amount,
+            'note' => $this->note,
+            'return_uri' => $this->returnUri,
         ];
     }
 }
