@@ -15,20 +15,22 @@ class Charge extends AbstractApi
      *
      * @throws InvalidResponseException
      */
-    public function createNew(Domain $charge): void
+    public function createNew(Domain $charge)
     {
-        $charge->updateStore($this->doRequest('post', '/wallet/charge', $charge->getCreateData())->toArray());
+        return $charge->updateStore($this->doRequest('POST', '/wallet/charge', $charge->getCreateData())->toArray());
     }
 
     /**
      * @param string $chargeId
      *
-     * @return Domain
-     *
-     * @throws InvalidResponseException
+     * @return Domain|null
      */
-    public function find(string $chargeId): Domain
+    public function find(string $chargeId): ?Domain
     {
-        return $this->doRequest('post', '/wallet/charge/' . $chargeId);
+        try {
+            return $this->doRequest('GET', '/wallet/charge/' . $chargeId);
+        } catch (InvalidResponseException $e) {
+            return null;
+        }
     }
 }

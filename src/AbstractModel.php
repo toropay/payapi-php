@@ -16,6 +16,9 @@ namespace Toro\Pay;
 use Doctrine\Common\Inflector\Inflector;
 use Toro\Pay\Provider\ResourceProviderInterface;
 
+/**
+ * @property mixed id
+ */
 abstract class AbstractModel implements \JsonSerializable
 {
     /**
@@ -77,6 +80,10 @@ abstract class AbstractModel implements \JsonSerializable
      */
     public function __get(string $name)
     {
+        if ('id' === $name) {
+            return $this->store[$this->idAttribute];
+        }
+
         $name = Inflector::tableize($property = $name);
 
         if (!array_key_exists($name, $this->store)) {
