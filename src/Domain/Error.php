@@ -16,6 +16,7 @@ namespace Toro\Pay\Domain;
 use Toro\Pay\AbstractModel;
 
 /**
+ * @property string|null error
  * @property string message
  * @property string hint
  * @property string code
@@ -71,5 +72,29 @@ class Error extends AbstractModel
         }
 
         return parent::__get($name);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAccessDenied(): bool
+    {
+        return 'access_denied' === $this->error && 401 === $this->code;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInvalidScope(): bool
+    {
+        return 'TODO';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotLogin(): bool
+    {
+        return 'TODO';
     }
 }
