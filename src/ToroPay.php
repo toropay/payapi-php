@@ -19,7 +19,7 @@ final class ToroPay
     const VERSION = '1.0-dev';
     const SERVICE_NAME = 'toropay';
     const BASE_URL = 'https://toropay.co';
-    const BASE_URL_SANDBOX = 'http://8db878c2.ngrok.io';
+    const BASE_URL_SANDBOX = 'https://sandbox.toropay.co';
 
     /**
      * @var ResourceProviderInterface
