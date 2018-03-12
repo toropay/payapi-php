@@ -19,7 +19,7 @@ use Toro\Pay\Provider\ResourceProviderInterface;
 /**
  * @property mixed id
  */
-abstract class AbstractModel implements \JsonSerializable
+abstract class AbstractModel implements \JsonSerializable, \ArrayAccess
 {
     /**
      * @var string
@@ -124,5 +124,37 @@ abstract class AbstractModel implements \JsonSerializable
     public function jsonSerialize()
     {
         return json_encode($this->store);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->store);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        throw new \RuntimeException('Only getter supported!');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($offset)
+    {
+        throw new \RuntimeException('Only getter supported!');
     }
 }
