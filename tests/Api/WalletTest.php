@@ -8,7 +8,7 @@ use Toro\Pay\Api\Info as Api;
 use Toro\Pay\Domain\Info as Domain;
 use Toro\Pay\Exception\InvalidResponseException;
 
-class InfoTest extends AbstractApiTestCase
+class WalletTest extends AbstractApiTestCase
 {
     /**
      * @throws \Exception
@@ -19,7 +19,7 @@ class InfoTest extends AbstractApiTestCase
         $this->expectExceptionCode(404);
         $this->expectExceptionMessage('The "balance" has not been found');
 
-        HttpClientOffline::fixture('/coin/info', function (HttpResponse $res) {
+        HttpClientOffline::fixture('/wallet/info', function (HttpResponse $res) {
             return $res
                 ->withJson('coin_info_404.json')
                 ->withStatus(404);
@@ -37,7 +37,7 @@ class InfoTest extends AbstractApiTestCase
      */
     public function testAccessToCoinInfo()
     {
-        HttpClientOffline::fixture('/coin/info', function (HttpResponse $res) {
+        HttpClientOffline::fixture('/wallet/info', function (HttpResponse $res) {
             return $res->withJson('coin_info.json');
         });
 

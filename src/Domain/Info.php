@@ -8,6 +8,9 @@ use Toro\Pay\AbstractModel;
 
 /**
  * @property string $currency
+ * @property string $balance
+ * @property string $income
+ * @property string $locale
  * @property User $user
  */
 class Info extends AbstractModel

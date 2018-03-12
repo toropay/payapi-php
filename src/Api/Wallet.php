@@ -6,12 +6,12 @@ namespace Toro\Pay\Api;
 
 use Toro\Pay\AbstractApi;
 use Toro\Pay\Exception\InvalidResponseException;
-use Toro\Pay\Domain\Info as Domain;
+use Toro\Pay\Domain\Info as InfoDomain;
 
-class Info extends AbstractApi
+class Wallet extends AbstractApi
 {
     /**
-     * @return Domain
+     * @return InfoDomain
      *
      * @throws InvalidResponseException
      */
