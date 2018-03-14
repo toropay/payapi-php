@@ -29,6 +29,6 @@ final class InvalidResponseException extends \Exception
     {
         $this->error = $error;
 
-        parent::__construct($error->message, is_int($error->code) ? $error->code : $code, $previous);
+        parent::__construct($error->message ?? 'Unknown error!', is_int($error->code) ? $error->code : $code, $previous);
     }
 }
