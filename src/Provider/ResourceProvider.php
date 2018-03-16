@@ -61,6 +61,8 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $resolver->setRequired(['clientId', 'clientSecret', 'ownerProvider', 'redirectUri']);
 
         $resolver->setDefault('httpClient', null);
+        $resolver->setDefault('baseUrl', null);
+        $resolver->setDefault('sandboxUrl', null);
         $resolver->setDefault('sandbox', true);
         $resolver->setDefault('apiVersion', 'v1');
         $resolver->setDefault('userAgent', sprintf('%s/%s', ToroPay::SERVICE_NAME, ToroPay::VERSION));
@@ -122,7 +124,9 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
      */
     private function getBaseUrl(Options $options)
     {
-        return $options['sandbox'] ? ToroPay::BASE_URL_SANDBOX : ToroPay::BASE_URL;
+        return $options['sandbox']
+            ? ($options['baseUrl'] ?? ToroPay::BASE_URL_SANDBOX)
+            : ($options['sandboxUrl'] ?? ToroPay::BASE_URL);
     }
 
     /**
