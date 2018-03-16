@@ -125,8 +125,8 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
     private function getBaseUrl(Options $options)
     {
         return $options['sandbox']
-            ? ($options['baseUrl'] ?? ToroPay::BASE_URL_SANDBOX)
-            : ($options['sandboxUrl'] ?? ToroPay::BASE_URL);
+            ? ($options['sandboxUrl'] ?? ToroPay::BASE_URL_SANDBOX)
+            : ($options['baseUrl'] ?? ToroPay::BASE_URL);
     }
 
     /**
