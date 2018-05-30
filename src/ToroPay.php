@@ -6,6 +6,7 @@ namespace Toro\Pay;
 
 use Doctrine\Common\Inflector\Inflector;
 use Toro\Pay\Api\Charge as ChargeApi;
+use Toro\Pay\Api\User as UserApi;
 use Toro\Pay\Hydrator\FacadeHydration;
 use Toro\Pay\Hydrator\HydrationInterface;
 use Toro\Pay\Provider\ResourceProvider;
@@ -13,6 +14,7 @@ use Toro\Pay\Provider\ResourceProviderInterface;
 
 /**
  * @property ChargeApi charge
+ * @property UserApi user
  */
 final class ToroPay
 {
