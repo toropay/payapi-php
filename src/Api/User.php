@@ -19,4 +19,16 @@ class User extends AbstractApi
     {
         return $this->doRequest('GET', '/user/info');
     }
+
+    /**
+     * @param int $id
+     *
+     * @return Domain
+     *
+     * @throws InvalidResponseException
+     */
+    public function show(int $id)
+    {
+        return $this->doRequest('GET', '/user/' . $id);
+    }
 }
